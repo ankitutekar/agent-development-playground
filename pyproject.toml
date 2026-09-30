@@ -7,10 +7,12 @@ authors = [
     { name = "Ankit Utekar", email = "ankit.16952@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "python-dotenv>=1.2.3",
+]
 
-[project.scripts]
-agent-development-playground = "agent_development_playground:main"
+[tool.uv.build-backend]
+module-name = "get_started"
 
 [build-system]
 requires = ["uv_build>=0.12.20,<0.13.0"]
