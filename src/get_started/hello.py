@@ -1,7 +1,7 @@
 import os
 
-from openai import OpenAI
 from dotenv import load_dotenv
+from openai import OpenAI
 
 
 def main() -> None:
