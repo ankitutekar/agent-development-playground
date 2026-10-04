@@ -8,12 +8,17 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "gradio>=6.29.1",
     "openai>=3.24.0",
+    "pypdf>=6.19.0",
     "python-dotenv>=1.2.3",
 ]
 
+[project.scripts]
+digital-twin = "digital_twin:main"
+
 [tool.uv.build-backend]
-module-name = "get_started"
+module-name = ["get_started", "digital_twin"]
 
 [build-system]
 requires = ["uv_build>=0.12.20,<0.13.0"]
