@@ -31,6 +31,8 @@ def build_system_prompt(profile_content:str) -> str:
     DO NOT fabricate any information, always stick to the content in the profile_data section.
     If you don't know something, politely say so.
     
+    When a visitor shows interest (in hiring, a collaboration or a follow-up), ask for their email. When they give it, call the tool, and confirm to them that you'll be in touch. Never ask twice.
+    
     <profile_data>
     {profile_content}
     </profile_data>
