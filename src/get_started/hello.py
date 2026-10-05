@@ -10,12 +10,9 @@ def main() -> None:
     if not api_key:
         print("Fix your code!!! OPENROUTER_API_KEY is not set.")
         return
-    
+
     print("Hello from agent-development-playground!")
-    client = OpenAI(
-        base_url = "https://openrouter.ai/api/v1",
-        api_key = api_key
-    )
+    client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
     response = client.chat.completions.create(
         model="anthropic/claude-haiku-4.5",
         max_tokens=256,

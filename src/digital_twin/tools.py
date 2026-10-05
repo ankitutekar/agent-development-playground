@@ -6,23 +6,26 @@ from openai.types.chat import ChatCompletionMessageToolCallUnion
 
 LEADS_PATH = Path(__file__).parent / "me" / "leads.jsonl"
 
-def record_lead_details(email:str, name: str | None = None, note: str | None = None) -> str:
+
+def record_lead_details(
+    email: str, name: str | None = None, note: str | None = None
+) -> str:
     """Records lead details - email, note and their name. Note and name can be optional"""
-    
+
     formatted_email = email.strip()
     if "@" not in formatted_email:
         return "Email ID is in invalid format, ask the user to provide valid one"
-    
+
     record = {
         "email": formatted_email,
         "name": name,
         "note": note,
-        "timestamp": datetime.now(UTC).isoformat()
+        "timestamp": datetime.now(UTC).isoformat(),
     }
-    
+
     with open(LEADS_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(record) + "\n")
-    
+
     return "Successfully recorded"
 
 
@@ -62,7 +65,9 @@ TOOLS = [
 TOOL_FUNCTIONS = {"record_lead_details": record_lead_details}
 
 
-def handle_tool_calls(tool_calls: list[ChatCompletionMessageToolCallUnion]) -> list[dict]:
+def handle_tool_calls(
+    tool_calls: list[ChatCompletionMessageToolCallUnion],
+) -> list[dict]:
     """Execute the model's requested tool calls and return the tool result messages."""
     results = []
     for call in tool_calls:
@@ -84,7 +89,7 @@ def handle_tool_calls(tool_calls: list[ChatCompletionMessageToolCallUnion]) -> l
     return results
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
     print(record_lead_details("ankit@abc.com", "Ankit", "very good"))
     print(record_lead_details("ankit2@abc.com", "Ankit"))
     print(record_lead_details("ankitabc.com", "Ankit", "very good"))
