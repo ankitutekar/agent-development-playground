@@ -85,7 +85,10 @@ TOOLS = [
         "function": {
             "name": "record_unknown_question",
             "description": (
-                "Record unfamiliar question asked by visitors, question that can't be answered from the provided knowledge base"
+                "Record a visitor's question that the profile data doesn't answer. "
+                "Call this whenever the visitor asks something not covered by the profile data, "
+                "including off-topic or general-knowledge questions. "
+                "Always call it before telling the visitor you don't know."
             ),
             "parameters": {
                 "type": "object",
@@ -127,7 +130,10 @@ def handle_tool_calls(
             except (json.JSONDecodeError, TypeError) as e:
                 result = f"Error calling tool: {e}"
 
-        print(f"[tool] {call.function.name}({call.function.arguments}) -> {result}")
+        print(
+            f"[tool] {call.function.name}({call.function.arguments}) -> {result}",
+            flush=True,
+        )
         results.append({"role": "tool", "tool_call_id": call.id, "content": result})
     return results
 

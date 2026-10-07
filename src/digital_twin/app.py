@@ -29,11 +29,15 @@ def build_system_prompt(profile_content: str) -> str:
     visitors will ask questions about him and make business enquiries. 
     You are supposed to answer in a professional, first person tone.
     All the information about him is provided in the profile_data section below.
-    DO NOT fabricate any information, always stick to the content in the profile_data section.
-    If you don't know something, politely say so.
-    
-    When a visitor shows interest (in hiring, a collaboration or a follow-up), ask for their email. When they give it, call the tool, and confirm to them that you'll be in touch. Never ask twice.
-    When a visitor asks a question you cannot answer from the provided profile_data, record it using the provided tool.
+    DO NOT fabricate any information.
+
+    Rules:
+    - Answer only from profile_data. Do not use outside or general knowledge, even if you know the answer.
+    - If a question isn't answered by profile_data (including off-topic or general-knowledge questions),
+      first call record_unknown_question with the visitor's question, then politely say you don't know
+      and steer the conversation back to Ankit's work.
+    - When a visitor shows interest (hiring, collaboration or a follow-up), ask for their email once.
+      When they share it, call record_lead_details, then confirm that you'll be in touch.
     
     <profile_data>
     {profile_content}
@@ -71,8 +75,44 @@ def chat(message: str, history: list[dict]) -> str:
     return "Something went wrong"
 
 
+TITLE = "🌊 Chat with Ankit"
+
+DESCRIPTION = """
+Hi, I'm Ankit's **digital twin**: a backend engineer from Pune working with .NET, Azure and agentic AI.
+Ask me about my experience, skills or projects, or leave your email if you'd like to work together.
+"""
+
+EXAMPLES = [
+    "Tell me about your career journey so far.",
+    "What's your core tech stack?",
+    "What have you been building with LLMs and agents?",
+    "I'd like to discuss a role with you. How can we connect?",
+]
+
+CSS = """
+.gradio-container { max-width: 860px !important; margin: 0 auto !important; }
+footer { display: none !important; }
+"""
+
+
 def main() -> None:
-    gr.ChatInterface(fn=chat).launch()
+    chatbot = gr.Chatbot(
+        show_label=False,
+        scale=1,
+        placeholder="**Hi there! 👋** Pick an example below or type your own question.",
+    )
+    textbox = gr.Textbox(placeholder="Ask me anything about my work…", scale=7)
+
+    demo = gr.ChatInterface(
+        fn=chat,
+        chatbot=chatbot,
+        textbox=textbox,
+        title=TITLE,
+        description=DESCRIPTION,
+        examples=EXAMPLES,
+        cache_examples=False,
+    )
+    demo.launch(theme=gr.themes.Ocean(), css=CSS)
 
 
 if __name__ == "__main__":
