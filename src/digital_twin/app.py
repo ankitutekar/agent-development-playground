@@ -33,6 +33,7 @@ def build_system_prompt(profile_content: str) -> str:
     If you don't know something, politely say so.
     
     When a visitor shows interest (in hiring, a collaboration or a follow-up), ask for their email. When they give it, call the tool, and confirm to them that you'll be in touch. Never ask twice.
+    When a visitor asks a question you cannot answer from the provided profile_data, record it using the provided tool.
     
     <profile_data>
     {profile_content}
@@ -59,7 +60,7 @@ def chat(message: str, history: list[dict]) -> str:
             model=MODEL, max_tokens=1024, messages=messages, tools=TOOLS
         )
         llm_response = response.choices[0].message
-        if not llm_response.tool_calls:
+        if not llm_response.tool_calls:  # or could use finish_reason
             return llm_response.content or ""
 
         tool_result_messages = handle_tool_calls(llm_response.tool_calls)

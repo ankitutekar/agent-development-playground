@@ -5,6 +5,7 @@ from pathlib import Path
 from openai.types.chat import ChatCompletionMessageToolCallUnion
 
 LEADS_PATH = Path(__file__).parent / "me" / "leads.jsonl"
+UNKNOWN_QUESTIONS_PATH = Path(__file__).parent / "me" / "unknown_questions.jsonl"
 
 
 def record_lead_details(
@@ -27,6 +28,25 @@ def record_lead_details(
         f.write(json.dumps(record) + "\n")
 
     return "Successfully recorded"
+
+
+def record_unknown_question(question: str) -> str:
+    """Records unfamiliar question"""
+
+    if not question or not question.strip():
+        return "Question cannot be empty"
+
+    formatted_question = question.strip()
+
+    record = {
+        "question": formatted_question,
+        "timestamp": datetime.now(UTC).isoformat(),
+    }
+
+    with open(UNKNOWN_QUESTIONS_PATH, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record) + "\n")
+
+    return "Unknown question successfully recorded"
 
 
 TOOLS = [
@@ -60,9 +80,32 @@ TOOLS = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "record_unknown_question",
+            "description": (
+                "Record unfamiliar question asked by visitors, question that can't be answered from the provided knowledge base"
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "Unfamiliar question asked by the visitor",
+                    }
+                },
+                "required": ["question"],
+                "additionalProperties": False,
+            },
+        },
+    },
 ]
 
-TOOL_FUNCTIONS = {"record_lead_details": record_lead_details}
+TOOL_FUNCTIONS = {
+    "record_lead_details": record_lead_details,
+    "record_unknown_question": record_unknown_question,
+}
 
 
 def handle_tool_calls(
