@@ -12,3 +12,4 @@ wheels/
 CLAUDE.md
 
 src/digital_twin/me/
+deploy/hf_space
